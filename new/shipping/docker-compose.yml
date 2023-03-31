@@ -1,0 +1,21 @@
+version: '3.1'
+services:
+  shipping:
+    container_name: shippingcontainer
+    image: shippingimage
+    build: ./
+    ports:
+      - "8084:8084"
+    depends_on:
+      - shippingpostgreservice
+  shippingpostgreservice:
+    image: postgres
+    ports:
+      - "5435:5432"
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=shippingdb   
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE= http://eurekaserver:8070/eureka          
+    volumes:
+      - ./src/main/resources/sql/shipmentinit.sql:/docker-entrypoint-initdb.d/shipmentinit.sql
