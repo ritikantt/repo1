@@ -19,7 +19,7 @@ import lombok.ToString;
 @Setter
 @ToString
 public class Orders {
-  
+
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ORDER_TOKEN")
   @SequenceGenerator(name = "ORDER_TOKEN", initialValue = 1, allocationSize = 1)

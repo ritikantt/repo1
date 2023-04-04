@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.mspoc.msdevkit.exception.MsPlaformException;
 import com.mspoc.order.dto.OrderRequest;
@@ -21,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @RestController
 @Slf4j
+@RequestMapping("/orders")
 public class OrderController {
 
   @Autowired
@@ -33,7 +35,7 @@ public class OrderController {
    * @return List of Orders
    * @throws MsPlaformException
    */
-  @GetMapping("/orders")
+  @GetMapping
   public List<Orders> getAllOrders() throws MsPlaformException {
     log.info("Inside get all orders function");
     return orderService.findAllOrders();
@@ -47,7 +49,7 @@ public class OrderController {
    * @return response entity
    * @throws MsPlaformException
    */
-  @PostMapping("/order/place")
+  @PostMapping
   public ResponseEntity<String> placeOrder(@Valid @RequestBody OrderRequest orderRequest)
       throws MsPlaformException {
     log.info("Inside place order function");

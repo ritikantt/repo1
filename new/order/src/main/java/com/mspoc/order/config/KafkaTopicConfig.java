@@ -10,25 +10,38 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.core.KafkaAdmin;
 
+/**
+ * Class to add topics for all beans of type NewTopic
+ *
+ */
 @Configuration
 public class KafkaTopicConfig {
 
-	@Value(value = "${spring.kafka.bootstrap-servers}")
-	private String bootstrapAddress;
-	
-	@Value(value = "${spring.kafka.template.default-topic}")
-	private String topicName;
+  @Value(value = "${spring.kafka.bootstrap-servers}")
+  private String bootstrapAddress;
 
-	@Bean
-	public KafkaAdmin kafkaAdmin() {
-		Map<String, Object> configs = new HashMap<>();
-		configs.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
-		return new KafkaAdmin(configs);
-	}
+  @Value(value = "${spring.kafka.template.default-topic}")
+  private String topicName;
 
-	@Bean
-	public NewTopic topic1() {
-		return new NewTopic(topicName, null, null);
-		//return new NewTopic(topicName, 1, (short) 1);
-	}
+  /**
+   * Kafka server configurations
+   * 
+   * @return KafkaAdmin
+   */
+  @Bean
+  public KafkaAdmin kafkaAdmin() {
+    Map<String, Object> configs = new HashMap<>();
+    configs.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
+    return new KafkaAdmin(configs);
+  }
+
+  /**
+   * Spring bean for kafka topic
+   * 
+   * @return NewTopic
+   */
+  @Bean
+  public NewTopic topic1() {
+    return new NewTopic(topicName, null, null);
+  }
 }

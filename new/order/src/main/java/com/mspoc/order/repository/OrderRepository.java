@@ -17,5 +17,11 @@ public interface OrderRepository extends CrudRepository<Orders, String> {
    */
   public List<Orders> findAll();
 
+  /**
+   * Fetch the order for given cart id
+   * 
+   * @param cartId
+   * @return Orders
+   */
   public Orders findByCartId(int cartId);
 }

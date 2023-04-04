@@ -19,5 +19,11 @@ public interface ShippingService {
    */
   public List<Shipment> findAllShipments() throws MsPlaformException;
 
+  /**
+   * Function to add new shipping entry into the shipment table
+   * 
+   * @param orderPlacedEvent
+   * @throws MsPlaformException
+   */
   public void addShipmentForOrder(OrderPlacedEvent orderPlacedEvent) throws MsPlaformException;
 }

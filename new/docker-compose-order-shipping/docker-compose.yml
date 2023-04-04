@@ -1,0 +1,74 @@
+version: '3'
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.0.1
+    container_name: zookeeper
+    ports:
+      - '2181:2181'
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+  broker:
+    image: confluentinc/cp-kafka:7.0.1
+    container_name: broker
+    ports:
+      - "9092:9092"
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://broker:29092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+  eurekaserver:
+    container_name: eurekaservercontainer
+    image: eurekaserverimage
+    ports:
+      - '8070:8070'
+  order:
+    container_name: ordercontainer
+    image: orderimage
+    ports:
+      - '8083:8083'
+    depends_on:
+      - mysqlorderservice
+      - eurekaserver
+      - broker
+    environment:
+      - 'EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eurekaserver:8070/eureka'
+  mysqlorderservice:
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    restart: always
+    environment:
+      - MYSQL_DATABASE=orderdb
+      - MYSQL_USER=mysql
+      - MYSQL_PASSWORD=mysql
+      - MYSQL_ROOT_PASSWORD=mysql
+    volumes:
+      - ./src/main/resources/sql/orderinit.sql:/docker-entrypoint-initdb.d/orderinit.sql
+  shipping:
+    container_name: shippingcontainer
+    image: shippingimage
+    ports:
+      - '8084:8084'
+    depends_on:
+      - shippingpostgreservice
+      - eurekaserver
+      - broker
+    environment:
+      - 'EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eurekaserver:8070/eureka'
+  shippingpostgreservice:
+    image: postgres
+    ports:
+      - '5435:5432'
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=shippingdb
+    volumes:
+      - './sql/shipmentinit.sql:/docker-entrypoint-initdb.d/shipmentinit.sql'

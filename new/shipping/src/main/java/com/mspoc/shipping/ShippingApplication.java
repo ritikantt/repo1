@@ -1,6 +1,7 @@
 package com.mspoc.shipping;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -18,22 +19,31 @@ import lombok.extern.slf4j.Slf4j;
  *
  */
 @SpringBootApplication
-@ComponentScans({ @ComponentScan({ "com.mspoc.shipping.controller", "com.mspoc.msdevkit.exception.handler" }) })
+@ComponentScans({
+    @ComponentScan({"com.mspoc.shipping.controller", "com.mspoc.msdevkit.exception.handler"})})
 @EnableJpaRepositories("com.mspoc.shipping.repository")
 @EntityScan("com.mspoc.shipping.entity")
 @Slf4j
 public class ShippingApplication {
 
-	@Autowired
-	private ShippingService shippingService;
+  @Autowired
+  private ShippingService shippingService;
 
-	public static void main(String[] args) {
-		SpringApplication.run(ShippingApplication.class, args);
-	}
 
-	@KafkaListener(topics = "notificationTopic", containerFactory = "orderKafkaListenerContainerFactory")
-	public void handleNotification(OrderPlacedEvent orderPlacedEvent) throws MsPlaformException {
-		log.info("Received Notification for Order - {}", orderPlacedEvent);
-		shippingService.addShipmentForOrder(orderPlacedEvent);
-	}
+  public static void main(String[] args) {
+    SpringApplication.run(ShippingApplication.class, args);
+  }
+
+  /**
+   * Kafka listener method implementation
+   * 
+   * @param orderPlacedEvent
+   * @throws MsPlaformException
+   */
+  @KafkaListener(topics = "notificationTopic",
+      containerFactory = "orderKafkaListenerContainerFactory")
+  public void handleNotification(OrderPlacedEvent orderPlacedEvent) throws MsPlaformException {
+    log.info("Received Notification for Order - {}", orderPlacedEvent);
+    shippingService.addShipmentForOrder(orderPlacedEvent);
+  }
 }

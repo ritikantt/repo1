@@ -1,0 +1,4 @@
+docker exec -it b78dc42b96a1a09fcc2dd5fdd8cdfda3595fe070a78b66acb111c246540f113f mysql -uuser -p
+use orderdb
+ show tables;
+  select * from orders;

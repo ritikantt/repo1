@@ -1,0 +1,47 @@
+version: '3.1'
+services:
+  eurekaserver:
+    container_name: eurekaservercontainer
+    image: eurekaserverimage
+    ports:
+      - '8070:8070'
+  productapp:
+    container_name: productcontainer
+    image: productimage
+    ports:
+      - "8081:8081"
+    depends_on:
+      - postgreservice
+      - eurekaserver
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eurekaserver:8070/eureka
+  postgreservice:
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=productdb       
+    volumes:
+      - ./sql/productinit.sql:/docker-entrypoint-initdb.d/productinit.sql    
+  shoppingcartapp:
+    container_name: shoppingcartcontainer
+    image: shoppingcartimage
+    ports:
+      - '8082:8082'
+    depends_on:
+      - cartpostgreservice
+      - eurekaserver
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eurekaserver:8070/eureka
+  cartpostgreservice:
+    image: postgres
+    ports:
+      - '5433:5432'
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=shoppingcartdb 
+    volumes:
+      - ./sql/cartinit.sql:/docker-entrypoint-initdb.d/cartinit.sql

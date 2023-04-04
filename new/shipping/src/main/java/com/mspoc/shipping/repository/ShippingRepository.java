@@ -10,7 +10,7 @@ import com.mspoc.shipping.entity.Shipment;
  *
  */
 @Repository
-public interface ShippingRepository extends CrudRepository<Shipment, String>  {
+public interface ShippingRepository extends CrudRepository<Shipment, String> {
 
   /**
    * Fetch all shipments
